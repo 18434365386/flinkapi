@@ -1,0 +1,42 @@
+server:
+  port: 8080
+logging:
+  config: classpath:logback.xml
+spring:
+  kafka:
+    bootstrap-servers: 192.168.6.102:6667
+
+    # 配置生产者
+    producer:
+      # 消息重发的次数
+      retries: 3
+      # 一个批次可以使用的内存大小
+      batch-size: 16384
+      # 设置生产者内存缓冲区的大小
+      buffer-memory: 33554432
+      # 键的序列化方式
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      # 值的序列化方式
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      # acks: all
+      # 事务id
+      transaction-id-prefix: Stock-tran
+
+    # 配置消费者
+    consumer:
+      # 自动提交的时间间隔,在SpringBoot2.x版本是值的类型为Duration,需要付恶化特定的格式,如1S,1M,1H,1D
+      auto-commit-interval: 1000
+      # 指定了消费者在读取一个没有偏移量的分区或者偏移量无效的情况下该做如何处理
+      auto-offset-reset: earliest
+      # 是否自动提交偏移量，默认值是ture,为了避免出现重复数据,可以把它设置为false,然后手动提交偏移量
+      enable-auto-commit: false
+      # 键的反序列化方式
+      key-serializer: org.apache.kafka.common.serialization.StringDeSerializer
+      # 值的反序列化方式
+      value-serializer: org.apache.kafka.common.serialization.StringDeSerializer
+
+    listener:
+      # 手工ack,调用ack后立刻提交offset
+      ack-mode: manual_immediate
+      # 容器运行的线程数
+      concurrency: 4
